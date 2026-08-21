@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: Axis Proxy
+    runtime: docker
+    plan: starter # Change to 'starter' if you need more RAM/uptime
+    region: oregon # or frankfurt, singapore, etc.
+    envVars:
+      - key: NODE_ENV
+        value: production
