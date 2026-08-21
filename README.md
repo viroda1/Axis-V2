@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  ⚠️ <strong>Important Note:</strong> Axis is currently in <em>early development</em>. For the latest updates and the 2027 edition, please visit the new repository: <a href="https://github.com/viroda1/Axis-V2/"><b>axis-v2</b></a>.
+  ⚠️ <strong>Important Note:</strong> Axis is currently in <em>early development</em>. For the latest updates and the 2027 edition, please visit the new repository: <a href="https://github.com"><b>axis-v2</b></a>.
 </p>
 
 ---
@@ -42,7 +42,7 @@ The quickest way to get Axis running is to clone the repository directly using t
 
 ```bash
 gh repo clone viroda1/Axis-V2
-or the old version/2026 
+or the old version/2026 very
 gh repo clone viroda1/Axis
 ```
 
