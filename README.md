@@ -41,6 +41,8 @@ Choose the setup method that best matches your technical experience.
 The quickest way to get Axis running is to clone the repository directly using the GitHub CLI and host it on GitHub Pages or environments like Codespaces:
 
 ```bash
+gh repo clone viroda1/Axis-V2
+or the old version/2026 very
 gh repo clone viroda1/Axis
 ```
 
