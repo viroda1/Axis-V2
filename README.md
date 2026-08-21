@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  ⚠️ <strong>Important Note:</strong> Axis is currently in <em>early development</em>. For the latest updates and the 2027 edition, please visit the new repository: <a href="https://github.com"><b>axis-v2</b></a>.
+  ⚠️ <strong>Important Note:</strong> Axis is currently in <em>early development</em>. For the latest updates and the 2027 edition, please visit the new repository: <a href="https://github.com/viroda1/Axis-V2/"><b>axis-v2</b></a>.
 </p>
 
 ---
