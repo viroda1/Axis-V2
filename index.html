@@ -1,72 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axis</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js" defer></script>
-    <script type="module">
-        import * as BareMux from "https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
-        window.BareMux = BareMux;
-    </script>
-    <link rel="stylesheet" href="style.css">
-    <script src="./script.js" defer></script>
-    <style>
-        /* Small fix to align the logo in the navbar */
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            margin-right: 4px;
-        }
-        .nav-logo svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--text-muted);
-            transition: fill 0.15s;
-        }
-        .nav-logo:hover svg {
-            fill: var(--text);
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Home Button -->
-
-    <div id="app"></div>
-
-    <div class="wisp-settings-modal hidden" id="wisp-settings-modal">
-        <div class="settings-card">
-            <div class="settings-header">
-                <!-- Logo in Modal -->
-                <h2>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
-                        <path d="M12 2L20 12H4L12 2Z"/>
-                        <path d="M12 22L4 12H20L12 22Z"/>
-                    </svg>
-                    Axis Proxy Settings
-                </h2>
-                <button class="close-btn" id="close-wisp-modal"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="settings-content">
-                <div class="section-title"><i class="fa-solid fa-cloud"></i> Select Server</div>
-                <div class="server-list" id="server-list"></div>
-                <div class="section-title"><i class="fa-solid fa-plus-circle"></i> Custom Server</div>
-                <div class="custom-input-group">
-                    <input type="text" id="custom-wisp-input" placeholder="wss://your-wisp-server.com/wisp/">
-                    <button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            </div>
-            <div class="settings-footer">
-                Lower ping = faster browsing
-            </div>
-        </div>
-    </div>
-</body>
-
-</html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axis</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js" defer></script>
+<script type="module">import*as BareMux from"https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";window.BareMux=BareMux;</script>
+<link rel="stylesheet" href="style.css">
+<script src="./script.js" defer></script>
+</head><body>
+<div id="app"></div>
+<!-- Settings Modal -->
+<div class="wisp-settings-modal hidden" id="wisp-settings-modal"><div class="settings-card">
+<div class="settings-header"><h2><svg class="modal-logo axis-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6 L20 6 L12 12 Z"/><path d="M4 18 L20 18 L12 12 Z"/></svg> Axis Proxy</h2><button class="close-btn" id="close-wisp-modal"><i class="fa-solid fa-xmark"></i></button></div>
+<div class="settings-content">
+<div class="section-title">Select Server</div><div class="server-list" id="server-list"></div>
+<div class="section-title">Custom Server</div>
+<div class="custom-input-group"><input type="text" id="custom-wisp-input" placeholder="wss://..."><button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button></div>
+</div><div class="settings-footer">Lower ping = faster browsing</div>
+</div></div>
+<!-- Redeem Modal -->
+<div class="wisp-settings-modal hidden" id="redeem-modal"><div class="settings-card">
+<div class="settings-header"><h2><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Redeem Code</h2><button class="close-btn" id="close-redeem-modal"><i class="fa-solid fa-xmark"></i></button></div>
+<div class="settings-content">
+<p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Enter a code to unlock 10x speed and remove UI lag.</p>
+<div class="custom-input-group"><input type="text" id="redeem-input" placeholder="XXXX-XXXX" style="text-transform:uppercase"><button id="apply-redeem-btn" style="background:#f59e0b;color:#000;font-weight:600">Unlock</button></div>
+<div id="redeem-status" style="margin-top:12px;font-size:13px;text-align:center;min-height:20px"></div>
+</div></div></div>
+</body></html>
