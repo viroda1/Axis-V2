@@ -1,69 +1,63 @@
+// ─── Axis v4 Service Worker ───
 const ADBLOCK = {
     blocked: [
-  "googlevideo.com/videoplayback",
-  "youtube.com/get_video_info",
-  "youtube.com/api/stats/ads",
-  "youtube.com/pagead",
-  "youtube.com/api/stats",
-  "youtube.com/get_midroll",
-  "youtube.com/ptracking",
-  "youtube.com/youtubei/v1/player",
-  "youtube.com/s/player",
-  "youtube.com/api/timedtext",
-  "facebook.com/ads",
-  "facebook.com/tr",
-  "fbcdn.net/ads",
-  "graph.facebook.com/ads",
-  "graph.facebook.com/pixel",
-  "ads-api.twitter.com",
-  "analytics.twitter.com",
-  "twitter.com/i/ads",
-  "ads.yahoo.com",
-  "advertising.com",
-  "adtechus.com",
-  "amazon-adsystem.com",
-  "adnxs.com",
-  "doubleclick.net",
-  "googlesyndication.com",
-  "googleadservices.com",
-  "rubiconproject.com",
-  "pubmatic.com",
-  "criteo.com",
-  "openx.net",
-  "taboola.com",
-  "outbrain.com",
-  "moatads.com",
-  "casalemedia.com",
-  "unityads.unity3d.com",
-  "/ads/",
-  "/adserver/",
-  "/banner/",
-  "/promo/",
-  "/tracking/",
-  "/beacon/",
-  "/metrics/",
-  "adsafeprotected.com",
-  "chartbeat.com",
-  "scorecardresearch.com",
-  "quantserve.com",
-  "krxd.net",
-  "demdex.net"
-]   
+        'googlevideo.com/videoplayback',
+        'youtube.com/get_video_info',
+        'youtube.com/api/stats/ads',
+        'youtube.com/pagead',
+        'youtube.com/api/stats',
+        'youtube.com/get_midroll',
+        'youtube.com/ptracking',
+        'youtube.com/youtubei/v1/player',
+        'youtube.com/s/player',
+        'youtube.com/api/timedtext',
+        'facebook.com/ads',
+        'facebook.com/tr',
+        'fbcdn.net/ads',
+        'graph.facebook.com/ads',
+        'graph.facebook.com/pixel',
+        'ads-api.twitter.com',
+        'analytics.twitter.com',
+        'twitter.com/i/ads',
+        'ads.yahoo.com',
+        'advertising.com',
+        'adtechus.com',
+        'amazon-adsystem.com',
+        'adnxs.com',
+        'doubleclick.net',
+        'googlesyndication.com',
+        'googleadservices.com',
+        'rubiconproject.com',
+        'pubmatic.com',
+        'criteo.com',
+        'openx.net',
+        'taboola.com',
+        'outbrain.com',
+        'moatads.com',
+        'casalemedia.com',
+        'unityads.unity3d.com',
+        '/ads/',
+        '/adserver/',
+        '/banner/',
+        '/promo/',
+        '/tracking/',
+        '/beacon/',
+        '/metrics/',
+        'adsafeprotected.com',
+        'chartbeat.com',
+        'scorecardresearch.com',
+        'quantserve.com',
+        'krxd.net',
+        'demdex.net'
+    ]
 };
 
 function isAdBlocked(url) {
-    const urlStr = url.toString();
-    for (const pattern of ADBLOCK.blocked) {
-        let regexPattern = pattern
-            .replace(/\*/g, '.*')
-            .replace(/\./g, '\\.')
-            .replace(/\?/g, '\\?');
-        const regex = new RegExp('^' + regexPattern + '$', 'i');
-        if (regex.test(urlStr)) {
-            return true;
-        }
-    }
-    return false;
+    const urlStr = url.toString().toLowerCase();
+    return ADBLOCK.blocked.some(pattern => {
+        const regex = new RegExp(pattern.replace(/\*/g, '.*').replace(/\./g, '\\.').replace(/\?/g, '\\?'), 'i');
+        return regex.test(urlStr);
+    });
 }
 
 const swPath = self.location.pathname;
@@ -72,30 +66,22 @@ self.basePath = self.basePath || basePath;
 
 self.$scramjet = {
     files: {
-        wasm: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm",
-        sync: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js",
+        wasm: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm',
+        sync: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js',
     }
 };
 
-importScripts("https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js");
-importScripts("https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.js");
+importScripts('https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js');
+importScripts('https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.js');
 
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
-const scramjet = new ScramjetServiceWorker({
-    prefix: basePath + "scramjet/"
-});
+const scramjet = new ScramjetServiceWorker({ prefix: basePath + 'scramjet/' });
 
 self.addEventListener('install', (e) => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
 
-// Wisp configuration - receives from script.js via postMessage
-let wispConfig = {
-    wispurl: null,
-    servers: [],
-    autoswitch: true
-};
-
-// Server health tracking for autoswitching
+// ─── Wisp config ───
+let wispConfig = { wispurl: null, servers: [], autoswitch: true };
 let serverHealth = new Map();
 let currentServerStartTime = null;
 const MAX_CONSECUTIVE_FAILURES = 2;
@@ -104,7 +90,6 @@ const PING_TIMEOUT = 3000;
 let resolveConfigReady;
 const configReadyPromise = new Promise(resolve => resolveConfigReady = resolve);
 
-// Ping a wisp server to check if it's responsive
 async function pingServer(url) {
     return new Promise((resolve) => {
         const start = Date.now();
@@ -114,17 +99,13 @@ async function pingServer(url) {
                 try { ws.close(); } catch {}
                 resolve({ url, success: false, latency: null });
             }, PING_TIMEOUT);
-
             ws.onopen = () => {
                 clearTimeout(timeout);
-                const latency = Date.now() - start;
-                try { ws.close(); } catch {}
-                resolve({ url, success: true, latency });
+                resolve({ url, success: true, latency: Date.now() - start });
+                ws.close();
             };
-
             ws.onerror = () => {
                 clearTimeout(timeout);
-                try { ws.close(); } catch {}
                 resolve({ url, success: false, latency: null });
             };
         } catch {
@@ -133,198 +114,73 @@ async function pingServer(url) {
     });
 }
 
-// Update server health status
-function updateServerHealth(url, success) {
-    const health = serverHealth.get(url) || { consecutiveFailures: 0, successes: 0, lastSuccess: 0 };
-    
-    if (success) {
-        health.consecutiveFailures = 0;
-        health.successes++;
-        health.lastSuccess = Date.now();
-    } else {
-        health.consecutiveFailures++;
-    }
-    
-    serverHealth.set(url, health);
-    return health;
+async function getBestServer() {
+    const servers = wispConfig.servers.length ? wispConfig.servers : [{ url: wispConfig.wispurl }];
+    const results = await Promise.all(servers.map(s => pingServer(s.url)));
+    const healthy = results.filter(r => r.success).sort((a, b) => (a.latency || Infinity) - (b.latency || Infinity));
+    return healthy.length ? healthy[0].url : null;
 }
 
-function switchToServer(url, latency = null) {
-    if (url === wispConfig.wispurl) return;
-    
-    console.log(`Axis SW: Switching from ${wispConfig.wispurl} to ${url}`);
-    wispConfig.wispurl = url;
-    currentServerStartTime = Date.now();
-    
-    // Notify all clients
-    self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-            client.postMessage({
-                type: 'wispChanged',
-                url: url,
-                name: wispConfig.servers.find(s => s.url === url)?.name || 'Unknown Server',
-                latency: latency
-            });
-        });
-    });
-
-    // Reset connection to force reconnection with new server
-    if (scramjet && scramjet.client) {
-        scramjet.client = null;
+self.addEventListener('message', (event) => {
+    if (event.data?.type === 'wispConfig') {
+        wispConfig = event.data.config;
+        resolveConfigReady();
     }
-}
+});
 
-// Proactively check server health and switch if needed
-async function proactiveServerCheck() {
-    if (!wispConfig.autoswitch || !wispConfig.servers || wispConfig.servers.length === 0) return;
+// ─── Fetch handler ───
+self.addEventListener('fetch', (event) => {
+    const url = new URL(event.request.url);
 
-    const currentUrl = wispConfig.wispurl;
-    
-    // Ping all servers to get current health status
-    const results = await Promise.all(
-        wispConfig.servers.map(s => pingServer(s.url))
-    );
-
-    // Update health tracking
-    results.forEach(r => updateServerHealth(r.url, r.success));
-
-    // If current server is bad and we have a better option, switch
-    const currentHealth = serverHealth.get(currentUrl);
-    if (currentHealth && currentHealth.consecutiveFailures > 0) {
-        const bestWorking = results
-            .filter(r => r.success && r.url !== currentUrl)
-            .sort((a, b) => a.latency - b.latency)[0];
-
-        if (bestWorking) {
-            switchToServer(bestWorking.url, bestWorking.latency);
-        }
+    // Block ads
+    if (isAdBlocked(url)) {
+        return event.respondWith(new Response('Blocked by Axis adblock', { status: 403 }));
     }
-}
 
-self.addEventListener("message", ({ data }) => {
-    if (data.type === "config") {
-        if (data.wispurl) {
-            wispConfig.wispurl = data.wispurl;
-            console.log("Axis SW: Received wispurl", data.wispurl);
-            currentServerStartTime = Date.now();
-        }
-        if (data.servers && data.servers.length > 0) {
-            wispConfig.servers = data.servers;
-            console.log("Axis SW: Received servers", data.servers.length);
+    // Skip non-HTTP requests
+    if (!url.protocol.startsWith('http')) return;
+
+    // Let Scramjet handle it
+    event.respondWith(
+        (async () => {
+            await configReadyPromise;
+
+            // Auto-switch if current server is failing
             if (wispConfig.autoswitch) {
-                setTimeout(proactiveServerCheck, 500);
-            }
-        }
-        if (typeof data.autoswitch !== 'undefined') {
-            wispConfig.autoswitch = data.autoswitch;
-            if (wispConfig.autoswitch && wispConfig.servers?.length > 0) {
-                setTimeout(proactiveServerCheck, 500);
-            }
-        }
-        // Resolve config ready when we have at least wispurl
-        if (wispConfig.wispurl && resolveConfigReady) {
-            resolveConfigReady();
-            resolveConfigReady = null;
-        }
-    } else if (data.type === "ping") {
-        pingServer(wispConfig.wispurl).then(result => {
-            self.clients.matchAll().then(clients => {
-                clients.forEach(client => {
-                    client.postMessage({ type: 'pingResult', ...result });
-                });
-            });
-        });
-    }
-});
-
-self.addEventListener("fetch", (event) => {
-    event.respondWith((async () => {
-        // Check if request URL matches ad blocking patterns
-        if (isAdBlocked(event.request.url)) {
-            console.log("Axis SW: Blocked ad request:", event.request.url);
-            return new Response(new ArrayBuffer(0), { status: 204 });
-        }
-
-        await scramjet.loadConfig();
-        if (scramjet.route(event)) {
-            return scramjet.fetch(event);
-        }
-        return fetch(event.request);
-    })());
-});
-
-scramjet.addEventListener("request", async (e) => {
-    e.response = (async () => {
-        await configReadyPromise;
-        
-        if (!wispConfig.wispurl) {
-            return new Response("Axis Proxy Error: Wisp URL not configured", { status: 500 });
-        }
-
-        if (!scramjet.client) {
-            const connection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
-            await connection.setTransport("https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs", [{ wisp: wispConfig.wispurl }]);
-            scramjet.client = connection;
-        }
-
-        const MAX_RETRIES = 2;
-        let lastErr;
-
-        for (let i = 0; i <= MAX_RETRIES; i++) {
-            try {
-                return await scramjet.client.fetch(e.url, {
-                    method: e.method,
-                    body: e.body,
-                    headers: e.requestHeaders,
-                    credentials: "include",
-                    mode: e.mode === "cors" ? e.mode : "same-origin",
-                    cache: e.cache,
-                    redirect: "manual",
-                    duplex: "half",
-                });
-            } catch (err) {
-                lastErr = err;
-                const errMsg = err.message.toLowerCase();
-                const isRetryable = errMsg.includes("connect") ||
-                    errMsg.includes("eof") ||
-                    errMsg.includes("handshake") ||
-                    errMsg.includes("reset");
-
-                if (!isRetryable || i === MAX_RETRIES || e.method !== 'GET') break;
-
-                console.warn(`Axis: Scramjet retry ${i + 1}/${MAX_RETRIES} for ${e.url} due to: ${err.message}`);
-                await new Promise(r => setTimeout(r, 500 * (i + 1)));
-            }
-        }
-
-        // Update server health on failure
-        updateServerHealth(wispConfig.wispurl, false);
-
-        // Check if we should switch to a different server
-        if (wispConfig.autoswitch && wispConfig.servers && wispConfig.servers.length > 1) {
-            const currentHealth = serverHealth.get(wispConfig.wispurl);
-            
-            // Only switch if server has been unstable for a while
-            if (currentHealth && currentHealth.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-                // Find a working server that isn't the current one
-                for (const server of wispConfig.servers) {
-                    if (server.url === wispConfig.wispurl) continue;
-                    const serverH = serverHealth.get(server.url);
-                    // Prefer servers with no failures or fewer failures
-                    if (!serverH || serverH.consecutiveFailures < MAX_CONSECUTIVE_FAILURES) {
-                        // Ping to verify it's actually working
-                        const pingResult = await pingServer(server.url);
-                        if (pingResult.success) {
-                            console.log(`Axis SW: Auto-switching to ${server.url} due to failures on current server`);
-                            switchToServer(server.url, pingResult.latency);
-                            break;
-                        }
+                const health = serverHealth.get(wispConfig.wispurl) || { failures: 0 };
+                if (health.failures >= MAX_CONSECUTIVE_FAILURES) {
+                    const best = await getBestServer();
+                    if (best && best !== wispConfig.wispurl) {
+                        wispConfig.wispurl = best;
+                        console.log('[SW] Auto-switched to:', best);
                     }
                 }
             }
-        }
 
-        console.error("Axis: Scramjet Final Fetch Error:", lastErr);
-        return new Response("Axis Proxy Error: " + lastErr.message, { status: 502 });
-    })();
+            try {
+                const response = await scramjet.fetch(event.request);
+                // Track success
+                const health = serverHealth.get(wispConfig.wispurl) || { failures: 0 };
+                health.failures = 0;
+                serverHealth.set(wispConfig.wispurl, health);
+                return response;
+            } catch (err) {
+                // Track failure
+                const health = serverHealth.get(wispConfig.wispurl) || { failures: 0 };
+                health.failures++;
+                serverHealth.set(wispConfig.wispurl, health);
+                console.warn('[SW] Fetch failed, trying fallback...', err);
+
+                // Try fallback
+                const fallback = await getBestServer();
+                if (fallback && fallback !== wispConfig.wispurl) {
+                    wispConfig.wispurl = fallback;
+                    try {
+                        return await scramjet.fetch(event.request);
+                    } catch { /* fall through to error */ }
+                }
+                return new Response('Proxy error', { status: 502 });
+            }
+        })()
+    );
 });
