@@ -1,30 +1,71 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Axis</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js" defer></script>
-<script type="module">import*as BareMux from"https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";window.BareMux=BareMux;</script>
-<link rel="stylesheet" href="style.css">
-<script src="./script.js" defer></script>
-</head><body>
-<div id="app"></div>
-<!-- Settings Modal -->
-<div class="wisp-settings-modal hidden" id="wisp-settings-modal"><div class="settings-card">
-<div class="settings-header"><h2><svg class="modal-logo axis-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6 L20 6 L12 12 Z"/><path d="M4 18 L20 18 L12 12 Z"/></svg> Axis Proxy</h2><button class="close-btn" id="close-wisp-modal"><i class="fa-solid fa-xmark"></i></button></div>
-<div class="settings-content">
-<div class="section-title">Select Server</div><div class="server-list" id="server-list"></div>
-<div class="section-title">Custom Server</div>
-<div class="custom-input-group"><input type="text" id="custom-wisp-input" placeholder="wss://..."><button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button></div>
-</div><div class="settings-footer">Lower ping = faster browsing</div>
-</div></div>
-<!-- Redeem Modal -->
-<div class="wisp-settings-modal hidden" id="redeem-modal"><div class="settings-card">
-<div class="settings-header"><h2><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Redeem Code</h2><button class="close-btn" id="close-redeem-modal"><i class="fa-solid fa-xmark"></i></button></div>
-<div class="settings-content">
-<p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Enter a code to unlock 10x speed and remove UI lag.</p>
-<div class="custom-input-group"><input type="text" id="redeem-input" placeholder="XXXX-XXXX" style="text-transform:uppercase"><button id="apply-redeem-btn" style="background:#f59e0b;color:#000;font-weight:600">Unlock</button></div>
-<div id="redeem-status" style="margin-top:12px;font-size:13px;text-align:center;min-height:20px"></div>
-</div></div></div>
-</body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Axis v4</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="app">
+        <!-- ===== TOP BAR ===== -->
+        <header class="topbar">
+            <div class="logo">⚡ Axis v4</div>
+            <div class="server-selector">
+                <select id="serverSelect" aria-label="Select proxy server"></select>
+                <button id="refreshServersBtn" title="Refresh server list">⟳</button>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="dot"></span> <span id="statusText">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- ===== TAB BAR ===== -->
+        <div class="tabs" id="tabBar">
+            <div class="tab active" data-tab="0">
+                <span class="tab-favicon">🏠</span>
+                <span class="tab-title">Home</span>
+                <button class="tab-close">×</button>
+            </div>
+        </div>
+
+        <!-- ===== BROWSER VIEWPORT ===== -->
+        <div class="viewport" id="viewport">
+            <!-- Home / New Tab content loads here -->
+            <iframe id="browserFrame" src="NT.html" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+        </div>
+
+        <!-- ===== NAVIGATION BAR ===== -->
+        <nav class="navbar">
+            <button id="backBtn" title="Go back">◀</button>
+            <button id="forwardBtn" title="Go forward">▶</button>
+            <button id="refreshBtn" title="Refresh">⟳</button>
+            <input type="text" id="urlBar" placeholder="Search or enter URL..." autocomplete="off" />
+            <button id="newTabBtn" title="New tab">＋</button>
+        </nav>
+
+        <!-- ===== REDEEM PANEL (hidden by default) ===== -->
+        <div id="redeemPanel" class="redeem-panel">
+            <div class="redeem-inner">
+                <h3>⚡ Redeem Speed Code</h3>
+                <p>Enter a code to unlock <strong>10× speed</strong> and remove UI lag.</p>
+                <div class="redeem-input-group">
+                    <input type="text" id="redeemInput" placeholder="XXXX-XXXX-XXXX" maxlength="14" />
+                    <button id="redeemBtn">Unlock</button>
+                </div>
+                <div id="redeemMessage" class="redeem-message"></div>
+                <button id="closeRedeemBtn" class="redeem-close">✕</button>
+            </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer id="footer">
+            <span id="clockDisplay"></span>
+            <span id="dateDisplay"></span>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
