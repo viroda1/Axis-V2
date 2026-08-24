@@ -1,9 +1,10 @@
 services:
   - type: web
-    name: Axis Proxy
-    runtime: docker
-    plan: starter # Change to 'starter' if you need more RAM/uptime
-    region: oregon # or frankfurt, singapore, etc.
+    name: axis-v4
+    runtime: image
+    repo: https://github.com/viroda1/Axis-V4
+    plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: NODE_ENV
         value: production
