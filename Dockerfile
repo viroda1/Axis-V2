@@ -1,17 +1,28 @@
-# Use a lightweight Nginx image
+# ─── Builder ───
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# ─── Final ───
 FROM nginx:alpine
 
-# Remove the default Nginx configuration
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy our custom Nginx configuration (handles Service Workers & WASM properly)
+# Copy nginx config
 COPY nginx.conf /etc/nginx/conf.d/
 
-# Copy all your website files (HTML, CSS, JS, bareworker.js, etc.) into Nginx
+# Copy website files
 COPY . /usr/share/nginx/html
 
-# Expose port 80 for web traffic
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
+
 EXPOSE 80
 
-# Start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
